@@ -6,6 +6,54 @@
     <title>Petname Generator - Generate Memorable Names</title>
     <meta name="description" content="Generate memorable, pronounceable pet names for servers, containers, or anything else. Inspired by Ubuntu and Kubernetes naming conventions.">
     <style>
+        :root {
+            /* Dark theme (default) */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --container-bg: #0f3460;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --text-tertiary: #6c757d;
+            --accent-primary: #7c9aff;
+            --accent-secondary: #48bb78;
+            --accent-tertiary: #b794f6;
+            --result-bg: #1a2332;
+            --result-border: #2d3748;
+            --input-bg: #1a2332;
+            --input-border: #2d3748;
+            --input-text: #e9ecef;
+            --stat-bg: #1a2332;
+            --info-bg: #1a2e40;
+            --info-text: #cbd5e0;
+            --petname-item-bg: #1a2332;
+            --petname-item-border: #2d3748;
+            --link-color: #7c9aff;
+        }
+
+        body.light-theme {
+            /* Light theme */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --container-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent-primary: #667eea;
+            --accent-secondary: #48bb78;
+            --accent-tertiary: #9f7aea;
+            --result-bg: #f8f9fa;
+            --result-border: #e9ecef;
+            --input-bg: #ffffff;
+            --input-border: #e9ecef;
+            --input-text: #333333;
+            --stat-bg: #ffffff;
+            --info-bg: #e7f3ff;
+            --info-text: #495057;
+            --petname-item-bg: #ffffff;
+            --petname-item-border: #e9ecef;
+            --link-color: #667eea;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,56 +62,90 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #333;
+            color: var(--text-primary);
+            transition: background 0.3s ease;
         }
 
         .container {
-            background: white;
+            background: var(--container-bg);
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
             max-width: 800px;
             width: 100%;
             margin: 20px 0;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--result-bg);
+            border: 2px solid var(--result-border);
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-primary);
+        }
+
+        .theme-icon {
+            font-size: 1.2em;
         }
 
         h1 {
-            color: #667eea;
+            color: var(--accent-primary);
             font-size: 2.5em;
             margin-bottom: 10px;
             text-align: center;
+            transition: color 0.3s ease;
         }
 
         .subtitle {
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             font-size: 1.1em;
+            transition: color 0.3s ease;
         }
 
         .result-box {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
+            background: var(--result-bg);
+            border: 2px solid var(--result-border);
             border-radius: 12px;
             padding: 30px;
             margin: 30px 0;
             text-align: center;
             position: relative;
+            transition: all 0.3s ease;
         }
 
         .petname {
             font-size: 2.5em;
             font-weight: bold;
-            color: #667eea;
+            color: var(--accent-primary);
             font-family: 'Courier New', monospace;
             word-break: break-all;
             margin-bottom: 15px;
+            transition: color 0.3s ease;
         }
 
         .controls {
@@ -80,25 +162,28 @@
 
         label {
             font-weight: 600;
-            color: #495057;
+            color: var(--text-secondary);
             font-size: 0.95em;
+            transition: color 0.3s ease;
         }
 
         input[type="number"],
         input[type="text"],
         select {
             padding: 12px;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: var(--input-bg);
+            color: var(--input-text);
         }
 
         input[type="number"]:focus,
         input[type="text"]:focus,
         select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent-primary);
         }
 
         .button-group {
@@ -119,34 +204,37 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: var(--accent-primary);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: var(--accent-primary);
+            filter: brightness(0.9);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: #48bb78;
+            background: var(--accent-secondary);
             color: white;
         }
 
         .btn-secondary:hover {
-            background: #38a169;
+            background: var(--accent-secondary);
+            filter: brightness(0.9);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
         }
 
         .btn-generate-multiple {
             grid-column: 1 / -1;
-            background: #9f7aea;
+            background: var(--accent-tertiary);
         }
 
         .btn-generate-multiple:hover {
-            background: #805ad5;
+            background: var(--accent-tertiary);
+            filter: brightness(0.9);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(159, 122, 234, 0.4);
         }
@@ -159,36 +247,38 @@
         }
 
         .petname-item {
-            background: white;
-            border: 2px solid #e9ecef;
+            background: var(--petname-item-bg);
+            border: 2px solid var(--petname-item-border);
             border-radius: 8px;
             padding: 15px;
             font-family: 'Courier New', monospace;
             font-size: 1.2em;
-            color: #667eea;
+            color: var(--accent-primary);
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .petname-item:hover {
-            border-color: #667eea;
-            background: #f8f9fa;
+            border-color: var(--accent-primary);
+            background: var(--result-bg);
             transform: translateY(-2px);
         }
 
         .info {
             margin-top: 30px;
             padding: 20px;
-            background: #e7f3ff;
+            background: var(--info-bg);
             border-radius: 8px;
             font-size: 0.95em;
-            color: #495057;
+            color: var(--info-text);
+            transition: all 0.3s ease;
         }
 
         .info h2 {
-            color: #667eea;
+            color: var(--accent-primary);
             margin-bottom: 10px;
             font-size: 1.3em;
+            transition: color 0.3s ease;
         }
 
         .info p {
@@ -201,6 +291,10 @@
             line-height: 1.8;
         }
 
+        .info a {
+            color: var(--link-color);
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -209,22 +303,25 @@
         }
 
         .stat-box {
-            background: white;
+            background: var(--stat-bg);
             padding: 15px;
             border-radius: 8px;
             text-align: center;
+            transition: background 0.3s ease;
         }
 
         .stat-value {
             font-size: 1.8em;
             font-weight: bold;
-            color: #667eea;
+            color: var(--accent-primary);
+            transition: color 0.3s ease;
         }
 
         .stat-label {
             font-size: 0.9em;
-            color: #666;
+            color: var(--text-secondary);
             margin-top: 5px;
+            transition: color 0.3s ease;
         }
 
         .copy-notification {
@@ -263,6 +360,14 @@
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
+                padding-top: 60px;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.8em;
             }
 
             h1 {
@@ -285,6 +390,11 @@
 </head>
 <body>
     <div class="container">
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-icon" id="themeIcon">☀️</span>
+            <span id="themeText">Light</span>
+        </div>
+
         <h1>Petname Generator</h1>
         <p class="subtitle">Generate memorable, pronounceable names for servers, containers, or anything else</p>
 
@@ -346,13 +456,14 @@
                 <li>Test environments</li>
                 <li>Anything that needs a friendly, memorable identifier</li>
             </ul>
-            <p style="margin-top: 15px;">This tool is inspired by the original <a href="https://github.com/dustinkirkland/petname" target="_blank" style="color: #667eea;">petname utility</a> by Dustin Kirkland, used by Ubuntu and other projects.</p>
+            <p style="margin-top: 15px;">This tool is inspired by the original <a href="https://github.com/dustinkirkland/petname" target="_blank">petname utility</a> by Dustin Kirkland, used by Ubuntu and other projects.</p>
         </div>
     </div>
 
     <footer>
         <p>Petname Generator | Hosted at petname.moles.dev</p>
-        <p>Based on <a href="https://github.com/dustinkirkland/petname" target="_blank">github.com/dustinkirkland/petname</a></p>
+        <p>Based on <a href="https://github.com/dustinkirkland/petname" target="_blank">dustinkirkland/petname</a></p>
+        <p><a href="https://github.com/jmoles/petname.moles.dev" target="_blank">View on GitHub</a></p>
     </footer>
 
     <div class="copy-notification" id="copyNotification">Copied to clipboard!</div>
@@ -465,10 +576,50 @@
             document.getElementById('combinations').textContent = combinations.toLocaleString();
         }
 
+        // Theme management
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            if (body.classList.contains('light-theme')) {
+                // Switch to dark theme
+                body.classList.remove('light-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                // Switch to light theme
+                body.classList.add('light-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            if (savedTheme === 'light') {
+                body.classList.add('light-theme');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            } else {
+                // Dark is default, so we just update the UI accordingly
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            }
+        }
+
         // Update combinations when word count changes
         document.getElementById('words').addEventListener('input', updateCombinations);
 
         // Initialize
+        loadTheme();
         updateCombinations();
         generatePetname();
     </script>
