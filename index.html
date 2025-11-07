@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <meta name="darkreader-lock">
     <title>Petname Generator - Generate Memorable Names</title>
     <meta name="description" content="Generate memorable, pronounceable pet names for servers, containers, or anything else. Inspired by Ubuntu and Kubernetes naming conventions.">
     <style>
         :root {
+            color-scheme: dark;
+
             /* Dark theme (default) */
             --bg-gradient-start: #1a1a2e;
             --bg-gradient-end: #16213e;
@@ -31,6 +35,8 @@
         }
 
         body.light-theme {
+            color-scheme: light;
+
             /* Light theme */
             --bg-gradient-start: #667eea;
             --bg-gradient-end: #764ba2;
@@ -579,18 +585,21 @@
         // Theme management
         function toggleTheme() {
             const body = document.body;
+            const root = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
 
             if (body.classList.contains('light-theme')) {
                 // Switch to dark theme
                 body.classList.remove('light-theme');
+                root.style.colorScheme = 'dark';
                 themeIcon.textContent = '☀️';
                 themeText.textContent = 'Light';
                 localStorage.setItem('theme', 'dark');
             } else {
                 // Switch to light theme
                 body.classList.add('light-theme');
+                root.style.colorScheme = 'light';
                 themeIcon.textContent = '🌙';
                 themeText.textContent = 'Dark';
                 localStorage.setItem('theme', 'light');
@@ -601,15 +610,18 @@
         function loadTheme() {
             const savedTheme = localStorage.getItem('theme');
             const body = document.body;
+            const root = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
 
             if (savedTheme === 'light') {
                 body.classList.add('light-theme');
+                root.style.colorScheme = 'light';
                 themeIcon.textContent = '🌙';
                 themeText.textContent = 'Dark';
             } else {
                 // Dark is default, so we just update the UI accordingly
+                root.style.colorScheme = 'dark';
                 themeIcon.textContent = '☀️';
                 themeText.textContent = 'Light';
             }
