@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petname Generator - Generate Memorable Names</title>
+    <meta name="description" content="Generate memorable, pronounceable pet names for servers, containers, or anything else. Inspired by Ubuntu and Kubernetes naming conventions.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .result-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .petname {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95em;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-generate-multiple {
+            grid-column: 1 / -1;
+            background: #9f7aea;
+        }
+
+        .btn-generate-multiple:hover {
+            background: #805ad5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(159, 122, 234, 0.4);
+        }
+
+        .multiple-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .petname-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .petname-item:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #495057;
+        }
+
+        .info h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .info ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        footer {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .petname {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-generate-multiple {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Petname Generator</h1>
+        <p class="subtitle">Generate memorable, pronounceable names for servers, containers, or anything else</p>
+
+        <div class="result-box">
+            <div class="petname" id="petname">Click generate to create a petname</div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="words">Number of Words (1-3)</label>
+                <input type="number" id="words" min="1" max="3" value="2">
+            </div>
+
+            <div class="control-group">
+                <label for="separator">Separator</label>
+                <input type="text" id="separator" value="-" maxlength="5">
+            </div>
+
+            <div class="control-group">
+                <label for="count">Generate Multiple (for batch generation)</label>
+                <input type="number" id="count" min="1" max="100" value="10">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="generatePetname()">Generate Petname</button>
+            <button class="btn-secondary" onclick="copyToClipboard()">Copy to Clipboard</button>
+            <button class="btn-generate-multiple" onclick="generateMultiple()">Generate Multiple</button>
+        </div>
+
+        <div class="multiple-results" id="multipleResults"></div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value">261</div>
+                <div class="stat-label">Adverbs</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">449</div>
+                <div class="stat-label">Adjectives</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">452</div>
+                <div class="stat-label">Names</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="combinations">0</div>
+                <div class="stat-label">Combinations</div>
+            </div>
+        </div>
+
+        <div class="info">
+            <h2>About Petnames</h2>
+            <p>Petnames are memorable, pronounceable names generated by combining random words. They're perfect for:</p>
+            <ul>
+                <li>Server hostnames</li>
+                <li>Container names (Docker, Kubernetes)</li>
+                <li>Project codenames</li>
+                <li>Test environments</li>
+                <li>Anything that needs a friendly, memorable identifier</li>
+            </ul>
+            <p style="margin-top: 15px;">This tool is inspired by the original <a href="https://github.com/dustinkirkland/petname" target="_blank" style="color: #667eea;">petname utility</a> by Dustin Kirkland, used by Ubuntu and other projects.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Petname Generator | Hosted at petname.moles.dev</p>
+        <p>Based on <a href="https://github.com/dustinkirkland/petname" target="_blank">github.com/dustinkirkland/petname</a></p>
+    </footer>
+
+    <div class="copy-notification" id="copyNotification">Copied to clipboard!</div>
+
+    <script>
+        // Word lists
+        const ADVERBS = ["abnormally","absolutely","accurately","actively","actually","adequately","admittedly","adversely","allegedly","amazingly","annually","apparently","arguably","awfully","badly","barely","basically","blatantly","blindly","briefly","brightly","broadly","carefully","centrally","certainly","cheaply","cleanly","clearly","closely","commonly","completely","constantly","conversely","correctly","curiously","currently","daily","deadly","deeply","definitely","directly","distinctly","duly","eagerly","early","easily","eminently","endlessly","enormously","entirely","equally","especially","evenly","evidently","exactly","explicitly","externally","extremely","factually","fairly","finally","firmly","firstly","forcibly","formally","formerly","frankly","freely","frequently","friendly","fully","generally","gently","genuinely","ghastly","gladly","globally","gradually","gratefully","greatly","grossly","happily","hardly","heartily","heavily","hideously","highly","honestly","hopefully","hopelessly","horribly","hugely","humbly","ideally","illegally","immensely","implicitly","incredibly","indirectly","infinitely","informally","inherently","initially","instantly","intensely","internally","jointly","jolly","kindly","largely","lately","legally","lightly","likely","literally","lively","locally","logically","loosely","loudly","lovely","luckily","mainly","manually","marginally","mentally","merely","mildly","miserably","mistakenly","moderately","monthly","morally","mostly","multiply","mutually","namely","nationally","naturally","nearly","neatly","needlessly","newly","nicely","nominally","normally","notably","noticeably","obviously","oddly","officially","only","openly","optionally","overly","painfully","partially","partly","perfectly","personally","physically","plainly","pleasantly","poorly","positively","possibly","precisely","preferably","presently","presumably","previously","primarily","privately","probably","promptly","properly","publicly","purely","quickly","quietly","radically","randomly","rapidly","rarely","rationally","readily","really","reasonably","recently","regularly","reliably","remarkably","remotely","repeatedly","rightly","roughly","routinely","sadly","safely","scarcely","secondly","secretly","seemingly","sensibly","separately","seriously","severely","sharply","shortly","similarly","simply","sincerely","singularly","slightly","slowly","smoothly","socially","solely","specially","steadily","strangely","strictly","strongly","subtly","suddenly","suitably","supposedly","surely","terminally","terribly","thankfully","thoroughly","tightly","totally","trivially","truly","typically","ultimately","unduly","uniformly","uniquely","unlikely","urgently","usefully","usually","utterly","vaguely","vastly","verbally","vertically","vigorously","violently","virtually","visually","weekly","wholly","widely","wildly","willingly","wrongly","yearly"];
+
+        const ADJECTIVES = ["able","above","absolute","accepted","accurate","ace","active","actual","adapted","adapting","adequate","adjusted","advanced","alert","alive","allowed","allowing","amazed","amazing","ample","amused","amusing","apparent","apt","arriving","artistic","assured","assuring","awaited","awake","aware","balanced","becoming","beloved","better","big","blessed","bold","boss","brave","brief","bright","bursting","busy","calm","capable","capital","careful","caring","casual","causal","central","certain","champion","charmed","charming","cheerful","chief","choice","civil","classic","clean","clear","clever","climbing","close","closing","coherent","comic","communal","complete","composed","concise","concrete","content","cool","correct","cosmic","crack","creative","credible","crisp","crucial","cuddly","cunning","curious","current","cute","daring","darling","dashing","dear","decent","deciding","deep","definite","delicate","desired","destined","devoted","direct","discrete","distinct","diverse","divine","dominant","driven","driving","dynamic","eager","easy","electric","elegant","emerging","eminent","enabled","enabling","endless","engaged","engaging","enhanced","enjoyed","enormous","enough","epic","equal","equipped","eternal","ethical","evident","evolved","evolving","exact","excited","exciting","exotic","expert","factual","fair","faithful","famous","fancy","fast","feasible","fine","finer","firm","first","fit","fitting","fleet","flexible","flowing","fluent","flying","fond","frank","free","fresh","full","fun","funky","funny","game","generous","gentle","genuine","giving","glad","glorious","glowing","golden","good","gorgeous","grand","grateful","great","growing","grown","guided","guiding","handy","happy","hardy","harmless","healthy","helped","helpful","helping","heroic","hip","holy","honest","hopeful","hot","huge","humane","humble","humorous","ideal","immense","immortal","immune","improved","in","included","infinite","informed","innocent","inspired","integral","intense","intent","internal","intimate","inviting","joint","just","keen","key","kind","knowing","known","large","lasting","leading","learning","legal","legible","lenient","liberal","light","liked","literate","live","living","logical","loved","loving","loyal","lucky","magical","magnetic","main","major","many","massive","master","mature","maximum","measured","meet","merry","mighty","mint","model","modern","modest","moral","more","moved","moving","musical","mutual","national","native","natural","nearby","neat","needed","neutral","new","next","nice","noble","normal","notable","noted","novel","obliging","on","one","open","optimal","optimum","organic","oriented","outgoing","patient","peaceful","perfect","pet","picked","pleasant","pleased","pleasing","poetic","polished","polite","popular","positive","possible","powerful","precious","precise","premium","prepared","present","pretty","primary","prime","pro","probable","profound","promoted","prompt","proper","proud","proven","pumped","pure","quality","quick","quiet","rapid","rare","rational","ready","real","refined","regular","related","relative","relaxed","relaxing","relevant","relieved","renewed","renewing","resolved","rested","rich","right","robust","romantic","ruling","sacred","safe","saved","saving","secure","select","selected","sensible","set","settled","settling","sharing","sharp","shining","simple","sincere","singular","skilled","smart","smashing","smiling","smooth","social","solid","sought","sound","special","splendid","square","stable","star","steady","sterling","still","stirred","stirring","striking","strong","stunning","subtle","suitable","suited","summary","sunny","super","superb","supreme","sure","sweeping","sweet","talented","teaching","tender","thankful","thorough","tidy","tight","together","tolerant","top","topical","tops","touched","touching","tough","true","trusted","trusting","trusty","ultimate","unbiased","uncommon","unified","unique","united","up","upright","upward","usable","useful","valid","valued","vast","verified","viable","vital","vocal","wanted","warm","wealthy","welcome","welcomed","well","whole","willing","winning","wired","wise","witty","wondrous","workable","working","worthy"];
+
+        const NAMES = ["ox","ant","ape","asp","bat","bee","boa","bug","cat","cod","cow","cub","doe","dog","eel","eft","elf","elk","emu","ewe","fly","fox","gar","gnu","hen","hog","imp","jay","kid","kit","koi","lab","man","owl","pig","pug","pup","ram","rat","ray","yak","bass","bear","bird","boar","buck","bull","calf","chow","clam","colt","crab","crow","dane","deer","dodo","dory","dove","drum","duck","fawn","fish","flea","foal","fowl","frog","gnat","goat","grub","gull","hare","hawk","ibex","joey","kite","kiwi","lamb","lark","lion","loon","lynx","mako","mink","mite","mole","moth","mule","mutt","newt","orca","oryx","pika","pony","puma","seal","shad","slug","sole","stag","stud","swan","tahr","teal","tick","toad","tuna","wasp","wolf","worm","wren","yeti","adder","akita","alien","aphid","bison","boxer","bream","bunny","burro","camel","chimp","civet","cobra","coral","corgi","crane","dingo","drake","eagle","egret","filly","finch","gator","gecko","ghost","ghoul","goose","guppy","heron","hippo","horse","hound","husky","hyena","koala","krill","leech","lemur","liger","llama","louse","macaw","midge","molly","moose","moray","mouse","panda","perch","prawn","quail","racer","raven","rhino","robin","satyr","shark","sheep","shrew","skink","skunk","sloth","snail","snake","snipe","squid","stork","swift","tapir","tetra","tiger","troll","trout","viper","wahoo","whale","zebra","alpaca","amoeba","baboon","badger","beagle","bedbug","beetle","bengal","bobcat","caiman","cattle","cicada","collie","condor","cougar","coyote","dassie","dragon","earwig","falcon","feline","ferret","gannet","gibbon","glider","goblin","gopher","grouse","guinea","hermit","hornet","iguana","impala","insect","jackal","jaguar","jennet","kitten","kodiak","lizard","locust","maggot","magpie","mammal","mantis","marlin","marmot","marten","martin","mayfly","minnow","monkey","mullet","muskox","ocelot","oriole","osprey","oyster","parrot","pigeon","piglet","poodle","possum","python","quagga","rabbit","raptor","rodent","roughy","salmon","sawfly","serval","shiner","shrimp","spider","sponge","tarpon","thrush","tomcat","toucan","turkey","turtle","urchin","vervet","walrus","weasel","weevil","wombat","anchovy","anemone","bluejay","buffalo","bulldog","buzzard","caribou","catfish","chamois","cheetah","chicken","chigger","cowbird","crappie","crawdad","cricket","dogfish","dolphin","firefly","garfish","gazelle","gelding","giraffe","gobbler","gorilla","goshawk","grackle","griffon","grizzly","grouper","haddock","hagfish","halibut","hamster","herring","javelin","jawfish","jaybird","katydid","ladybug","lamprey","lemming","leopard","lioness","lobster","macaque","mallard","mammoth","manatee","mastiff","meerkat","mollusk","monarch","mongrel","monitor","monster","mudfish","muskrat","mustang","narwhal","oarfish","octopus","opossum","ostrich","panther","peacock","pegasus","pelican","penguin","phoenix","piranha","polecat","primate","quetzal","raccoon","rattler","redbird","redfish","reptile","rooster","sawfish","sculpin","seagull","skylark","snapper","spaniel","sparrow","sunbeam","sunbird","sunfish","tadpole","terrier","unicorn","vulture","wallaby","walleye","warthog","whippet","wildcat","aardvark","airedale","albacore","anteater","antelope","arachnid","barnacle","basilisk","blowfish","bluebird","bluegill","bonefish","bullfrog","cardinal","chipmunk","cockatoo","crayfish","dinosaur","doberman","duckling","elephant","escargot","flamingo","flounder","foxhound","glowworm","goldfish","grubworm","hedgehog","honeybee","hookworm","humpback","kangaroo","killdeer","kingfish","labrador","lacewing","ladybird","lionfish","longhorn","mackerel","malamute","marmoset","mastodon","moccasin","mongoose","monkfish","mosquito","pangolin","parakeet","pheasant","pipefish","platypus","polliwog","porpoise","reindeer","ringtail","sailfish","scorpion","seahorse","seasnail","sheepdog","shepherd","silkworm","squirrel","stallion","starfish","starling","stingray","stinkbug","sturgeon","terrapin","titmouse","tortoise","treefrog","werewolf","woodcock"];
+
+        let currentPetname = '';
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generatePetname() {
+            const words = parseInt(document.getElementById('words').value) || 2;
+            const separator = document.getElementById('separator').value || '-';
+
+            let parts = [];
+
+            if (words === 1) {
+                parts.push(getRandomElement(NAMES));
+            } else if (words === 2) {
+                parts.push(getRandomElement(ADJECTIVES));
+                parts.push(getRandomElement(NAMES));
+            } else if (words === 3) {
+                parts.push(getRandomElement(ADVERBS));
+                parts.push(getRandomElement(ADJECTIVES));
+                parts.push(getRandomElement(NAMES));
+            }
+
+            currentPetname = parts.join(separator);
+            document.getElementById('petname').textContent = currentPetname;
+            document.getElementById('multipleResults').innerHTML = '';
+            updateCombinations();
+        }
+
+        function generateMultiple() {
+            const count = parseInt(document.getElementById('count').value) || 10;
+            const words = parseInt(document.getElementById('words').value) || 2;
+            const separator = document.getElementById('separator').value || '-';
+
+            const petnames = new Set();
+
+            while (petnames.size < count) {
+                let parts = [];
+
+                if (words === 1) {
+                    parts.push(getRandomElement(NAMES));
+                } else if (words === 2) {
+                    parts.push(getRandomElement(ADJECTIVES));
+                    parts.push(getRandomElement(NAMES));
+                } else if (words === 3) {
+                    parts.push(getRandomElement(ADVERBS));
+                    parts.push(getRandomElement(ADJECTIVES));
+                    parts.push(getRandomElement(NAMES));
+                }
+
+                petnames.add(parts.join(separator));
+            }
+
+            const resultsDiv = document.getElementById('multipleResults');
+            resultsDiv.innerHTML = '';
+
+            petnames.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'petname-item';
+                div.textContent = name;
+                div.onclick = () => {
+                    currentPetname = name;
+                    document.getElementById('petname').textContent = name;
+                    copyToClipboard();
+                };
+                resultsDiv.appendChild(div);
+            });
+
+            document.getElementById('petname').textContent = 'Click any petname below to copy';
+        }
+
+        function copyToClipboard() {
+            if (!currentPetname) {
+                generatePetname();
+            }
+
+            navigator.clipboard.writeText(currentPetname).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        function updateCombinations() {
+            const words = parseInt(document.getElementById('words').value) || 2;
+            let combinations = 0;
+
+            if (words === 1) {
+                combinations = NAMES.length;
+            } else if (words === 2) {
+                combinations = ADJECTIVES.length * NAMES.length;
+            } else if (words === 3) {
+                combinations = ADVERBS.length * ADJECTIVES.length * NAMES.length;
+            }
+
+            document.getElementById('combinations').textContent = combinations.toLocaleString();
+        }
+
+        // Update combinations when word count changes
+        document.getElementById('words').addEventListener('input', updateCombinations);
+
+        // Initialize
+        updateCombinations();
+        generatePetname();
+    </script>
+</body>
+</html>

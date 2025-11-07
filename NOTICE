@@ -1,0 +1,17 @@
+Petname Generator Web Interface
+Copyright (C) 2025 Josh Moles <josh@moles.cc>
+
+This product includes software and data derived from the petname project:
+  https://github.com/dustinkirkland/petname
+  Copyright (C) 2014-2015 Dustin Kirkland <dustin.kirkland@gmail.com>
+  Licensed under the Apache License 2.0
+
+Specifically, this derivative work incorporates:
+- Word lists (adverbs.txt, adjectives.txt, names.txt) from the petname project
+- The concept and methodology of generating memorable names from word combinations
+
+The web interface implementation is an original work that presents the
+petname functionality in a browser-based format.
+
+Original petname project: https://github.com/dustinkirkland/petname
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
