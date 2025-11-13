@@ -1,0 +1,180 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  validate-html:
+    name: Validate HTML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install html-validate
+        run: npm install -g html-validate
+
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML files..."
+          html-validate index.html
+
+  validate-javascript:
+    name: Validate JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install -g eslint
+          npm install -g eslint-config-standard
+
+      - name: Extract and validate JavaScript
+        run: |
+          echo "Extracting JavaScript from HTML..."
+          # Extract JavaScript from index.html
+          sed -n '/<script>/,/<\/script>/p' index.html | sed '1d;$d' > temp.js || true
+
+          if [ -f temp.js ] && [ -s temp.js ]; then
+            echo "Validating JavaScript syntax..."
+            node -c temp.js
+            echo "✓ JavaScript syntax is valid"
+          else
+            echo "No JavaScript found or extraction failed"
+          fi
+
+          rm -f temp.js
+
+  validate-data-files:
+    name: Validate Data Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate word lists
+        run: |
+          echo "Validating data files..."
+
+          # Check that data files exist
+          for file in data/adjectives.txt data/adverbs.txt data/names.txt; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            fi
+            echo "✓ Found $file"
+          done
+
+          # Check for empty files
+          for file in data/adjectives.txt data/adverbs.txt data/names.txt; do
+            if [ ! -s "$file" ]; then
+              echo "❌ File is empty: $file"
+              exit 1
+            fi
+            lines=$(wc -l < "$file")
+            echo "✓ $file has $lines lines"
+          done
+
+          # Check for duplicate entries
+          for file in data/adjectives.txt data/adverbs.txt data/names.txt; do
+            duplicates=$(sort "$file" | uniq -d)
+            if [ -n "$duplicates" ]; then
+              echo "⚠️  Warning: Duplicate entries found in $file:"
+              echo "$duplicates"
+            fi
+          done
+
+          echo "✓ All data files validated"
+
+  validate-manifest:
+    name: Validate Manifest & Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate manifest.json
+        run: |
+          echo "Validating manifest.json..."
+          if [ ! -f manifest.json ]; then
+            echo "❌ manifest.json not found"
+            exit 1
+          fi
+
+          # Check if it's valid JSON
+          if ! python3 -m json.tool manifest.json > /dev/null 2>&1; then
+            echo "❌ manifest.json is not valid JSON"
+            exit 1
+          fi
+
+          echo "✓ manifest.json is valid JSON"
+
+      - name: Check favicon files
+        run: |
+          echo "Checking favicon files..."
+          for size in 192 512; do
+            file="android-chrome-${size}x${size}.png"
+            if [ ! -f "$file" ]; then
+              echo "⚠️  Warning: Missing $file"
+            else
+              echo "✓ Found $file"
+            fi
+          done
+
+  lint-markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint markdown files
+        run: |
+          echo "Linting markdown files..."
+          markdownlint '*.md' --disable MD013 MD033 || true
+          echo "✓ Markdown linting complete"
+
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for common secrets
+        run: |
+          echo "Checking for potential secrets..."
+
+          # Check for common secret patterns
+          if grep -r -i -E "(api_key|apikey|api-key|secret|password|token|private_key)" . --exclude-dir=.git --exclude-dir=.github --exclude="*.md" | grep -v "// " | grep -v "# "; then
+            echo "⚠️  Warning: Potential secrets or keys found. Please review."
+          else
+            echo "✓ No obvious secrets detected"
+          fi
