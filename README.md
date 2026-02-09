@@ -26,6 +26,41 @@ The generator uses three word lists from the original petname utility:
 - 2 words: 202,948 combinations
 - 3 words: 52,969,428 combinations
 
+## API
+
+A text-based API is available for generating petnames programmatically. Full documentation is available at [`docs.html`](docs.html).
+
+### Endpoint
+
+```
+GET /api/
+```
+
+### Query Parameters
+
+| Parameter   | Default | Description                          |
+|-------------|---------|--------------------------------------|
+| `words`     | `2`     | Number of words in the petname (1-3) |
+| `separator` | `-`     | Character used to join words         |
+
+### Examples
+
+```bash
+# Default 2-word petname
+curl https://petname.moles.dev/api/
+# brave-lion
+
+# 3-word petname
+curl https://petname.moles.dev/api/?words=3
+# deeply-noble-falcon
+
+# Custom separator
+curl https://petname.moles.dev/api/?words=2&separator=_
+# clever_fox
+```
+
+The response is plain text (`text/plain`) with a trailing newline, making it easy to use in shell scripts and pipelines.
+
 ## Usage
 
 Simply open `index.html` in a web browser, or deploy to any static hosting service.
