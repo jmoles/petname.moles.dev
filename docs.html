@@ -422,6 +422,41 @@
         <pre>NAME=$(curl -s https://petname.moles.dev/api)
 echo "New server name: $NAME"</pre>
 
+        <h2>Slack Integration</h2>
+        <p>Use petname as a Slack slash command to generate names directly in Slack. The result is shown only to you (ephemeral), so you can copy and use it without posting to the channel.</p>
+
+        <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-url">https://petname.moles.dev/api/slack</span>
+        </div>
+
+        <h3>Setup</h3>
+        <p>To add <code>/petname</code> to your Slack workspace:</p>
+        <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+            <li>Go to <a href="https://api.slack.com/apps" style="color: var(--link-color);">api.slack.com/apps</a> and create a new app</li>
+            <li>Navigate to <strong>Slash Commands</strong> and create a new command</li>
+            <li>Set the command to <code>/petname</code></li>
+            <li>Set the Request URL to <code>https://petname.moles.dev/api/slack</code></li>
+            <li>Install the app to your workspace</li>
+        </ol>
+
+        <h3>Usage</h3>
+
+        <p class="example-label">Default (2-word petname):</p>
+        <pre>/petname</pre>
+        <p class="example-label">Response (only visible to you):</p>
+        <pre class="response">brave-falcon</pre>
+
+        <p class="example-label">Specify word count:</p>
+        <pre>/petname 3</pre>
+        <p class="example-label">Response:</p>
+        <pre class="response">deeply-brave-falcon</pre>
+
+        <p class="example-label">Custom separator:</p>
+        <pre>/petname 2 _</pre>
+        <p class="example-label">Response:</p>
+        <pre class="response">noble_tiger</pre>
+
         <div class="info">
             <p>The API uses the same word lists as the <a href="/">web generator</a>: 261 adverbs, 449 adjectives, and 452 animal names, providing over 53 million possible 3-word combinations.</p>
         </div>
