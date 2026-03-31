@@ -3,11 +3,11 @@ Copyright (C) 2025 Josh Moles <josh@moles.cc>
 
 This product includes software and data derived from the petname project:
   https://github.com/dustinkirkland/petname
-  Copyright (C) 2014-2015 Dustin Kirkland <dustin.kirkland@gmail.com>
+  Copyright (C) 2014-2023 Dustin Kirkland <dustin.kirkland@gmail.com>
   Licensed under the Apache License 2.0
 
 Specifically, this derivative work incorporates:
-- Word lists (adverbs.txt, adjectives.txt, names.txt) from the petname project
+- Medium word lists (adverbs.txt, adjectives.txt, names.txt) from the petname project
 - The concept and methodology of generating memorable names from word combinations
 
 The web interface implementation is an original work that presents the

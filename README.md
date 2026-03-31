@@ -16,15 +16,15 @@ A static web implementation of the [petname utility](https://github.com/dustinki
 
 The generator uses three word lists from the original petname utility:
 
-- **261 Adverbs** - Used for 3-word names
-- **449 Adjectives** - Used for 2 and 3-word names
-- **452 Animal Names** - Used for all name types
+- **1,630 Adverbs** - Used for 3-word names
+- **1,198 Adjectives** - Used for 2 and 3-word names
+- **1,052 Names** - Used for all name types
 
 ## Possible Combinations
 
-- 1 word: 452 combinations
-- 2 words: 202,948 combinations
-- 3 words: 52,969,428 combinations
+- 1 word: 1,052 combinations
+- 2 words: 1,260,296 combinations
+- 3 words: 2,054,282,480 combinations
 
 ## API
 
@@ -98,7 +98,7 @@ Based on the original [petname](https://github.com/dustinkirkland/petname) utili
 
 This project is licensed under the Apache License 2.0, the same license as the original [petname project](https://github.com/dustinkirkland/petname).
 
-- **Word lists** (adverbs, adjectives, names): Copyright (C) 2014-2015 Dustin Kirkland
+- **Word lists** (adverbs, adjectives, names): Copyright (C) 2014-2023 Dustin Kirkland
 - **Web interface**: Derivative work based on the original petname project
 
 See the [LICENSE](LICENSE) file for the full Apache License 2.0 text and the [NOTICE](NOTICE) file for attribution details.

@@ -1,6 +1,8 @@
-import { generatePetname } from "./petname.js";
+import { generatePetname, loadWordLists } from "./petname.js";
 
 export async function onRequestPost(context) {
+    const { adverbs, adjectives, names } = await loadWordLists(context.env.ASSETS);
+
     const formData = await context.request.formData();
     const text = (formData.get("text") || "").trim();
 
@@ -18,7 +20,7 @@ export async function onRequestPost(context) {
         }
     }
 
-    const petname = generatePetname(words, separator);
+    const petname = generatePetname(words, separator, adverbs, adjectives, names);
 
     return new Response(JSON.stringify({
         response_type: "ephemeral",

@@ -1,6 +1,8 @@
-import { generatePetname } from "./petname.js";
+import { generatePetname, loadWordLists } from "./petname.js";
 
-export function onRequestGet(context) {
+export async function onRequestGet(context) {
+    const { adverbs, adjectives, names } = await loadWordLists(context.env.ASSETS);
+
     const url = new URL(context.request.url);
 
     let words = parseInt(url.searchParams.get("words"), 10);
@@ -15,7 +17,7 @@ export function onRequestGet(context) {
 
     const separator = url.searchParams.get("separator") ?? "-";
 
-    const petname = generatePetname(words, separator);
+    const petname = generatePetname(words, separator, adverbs, adjectives, names);
 
     return new Response(petname + "\n", {
         headers: {

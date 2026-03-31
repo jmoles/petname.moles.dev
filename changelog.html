@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark light">
+    <meta name="darkreader-lock">
+    <meta name="theme-color" content="#7c9aff">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="petname">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="favicons/favicon.ico" />
+    <title>Changelog - Petname Generator</title>
+    <style>
+        :root {
+            color-scheme: dark;
+
+            /* Dark theme (default) */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --container-bg: #0f3460;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --text-tertiary: #6c757d;
+            --accent-primary: #7c9aff;
+            --accent-secondary: #48bb78;
+            --accent-tertiary: #b794f6;
+            --result-bg: #1a2332;
+            --result-border: #2d3748;
+            --link-color: #7c9aff;
+        }
+
+        body.light-theme {
+            color-scheme: light;
+
+            /* Light theme */
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --container-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent-primary: #667eea;
+            --accent-secondary: #48bb78;
+            --accent-tertiary: #9f7aea;
+            --result-bg: #f8f9fa;
+            --result-border: #e9ecef;
+            --link-color: #667eea;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            background: var(--container-bg);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            margin: 20px 0;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--result-bg);
+            border: 2px solid var(--result-border);
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-primary);
+        }
+
+        .theme-icon {
+            font-size: 1.2em;
+        }
+
+        h1 {
+            color: var(--accent-primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent-primary);
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .version-entry {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--result-border);
+        }
+
+        .version-entry:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .version-header {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .version-number {
+            color: var(--accent-primary);
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .version-date {
+            color: var(--text-tertiary);
+            font-size: 0.95em;
+        }
+
+        .change-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .change-list li {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .change-type {
+            display: inline-block;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .change-type.added {
+            background: rgba(72, 187, 120, 0.2);
+            color: var(--accent-secondary);
+        }
+
+        .change-type.changed {
+            background: rgba(124, 154, 255, 0.2);
+            color: var(--accent-primary);
+        }
+
+        .change-type.fixed {
+            background: rgba(183, 148, 246, 0.2);
+            color: var(--accent-tertiary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-tertiary);
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-icon" id="themeIcon">☀️</span>
+            <span id="themeText">Light</span>
+        </div>
+
+        <a href="/" class="back-link">&larr; Back to Generator</a>
+
+        <h1>Changelog</h1>
+        <p class="subtitle">Version history for the Petname Generator</p>
+
+        <div class="version-entry">
+            <div class="version-header">
+                <span class="version-number">v1.4.0</span>
+                <span class="version-date">2026-03-31</span>
+            </div>
+            <ul class="change-list">
+                <li><span class="change-type changed">Changed</span>Upgraded word lists from small to medium (1,630 adverbs, 1,198 adjectives, 1,052 names)</li>
+                <li><span class="change-type changed">Changed</span>Word lists now loaded dynamically from data files instead of embedded inline</li>
+                <li><span class="change-type changed">Changed</span>Statistics counts now update dynamically after word lists load</li>
+                <li><span class="change-type fixed">Fixed</span>Corrected upstream copyright year range to 2014-2023</li>
+            </ul>
+        </div>
+
+        <div class="version-entry">
+            <div class="version-header">
+                <span class="version-number">v1.3.0</span>
+                <span class="version-date">2026-02-18</span>
+            </div>
+            <ul class="change-list">
+                <li><span class="change-type added">Added</span>Slack slash command integration via <code>/api/slack</code> endpoint</li>
+            </ul>
+        </div>
+
+        <div class="version-entry">
+            <div class="version-header">
+                <span class="version-number">v1.2.0</span>
+                <span class="version-date">2026-02-08</span>
+            </div>
+            <ul class="change-list">
+                <li><span class="change-type added">Added</span>Text-based API endpoint for programmatic petname generation</li>
+                <li><span class="change-type added">Added</span>API documentation page</li>
+                <li><span class="change-type added">Added</span>Cloudflare Web Analytics</li>
+                <li><span class="change-type fixed">Fixed</span>HTML linter quote style (single to double quotes)</li>
+            </ul>
+        </div>
+
+        <div class="version-entry">
+            <div class="version-header">
+                <span class="version-number">v1.1.0</span>
+                <span class="version-date">2025-11-12</span>
+            </div>
+            <ul class="change-list">
+                <li><span class="change-type added">Added</span>GitHub Actions PR validation workflow</li>
+                <li><span class="change-type changed">Changed</span>Statistics and About sections now collapsed by default</li>
+                <li><span class="change-type changed">Changed</span>Made Statistics and About sections collapsible</li>
+                <li><span class="change-type fixed">Fixed</span>iPhone app icon spacing</li>
+                <li><span class="change-type fixed">Fixed</span>Linter error on button type</li>
+            </ul>
+        </div>
+
+        <div class="version-entry">
+            <div class="version-header">
+                <span class="version-number">v1.0.0</span>
+                <span class="version-date">2025-11-07</span>
+            </div>
+            <ul class="change-list">
+                <li><span class="change-type added">Added</span>Petname generator with 1-3 word support and custom separators</li>
+                <li><span class="change-type added">Added</span>Generate multiple petnames at once</li>
+                <li><span class="change-type added">Added</span>Copy to clipboard functionality</li>
+                <li><span class="change-type added">Added</span>Dark mode with theme toggle and Dark Reader support</li>
+                <li><span class="change-type added">Added</span>Favicons and Chrome web app manifest</li>
+                <li><span class="change-type added">Added</span>Responsive, mobile-friendly UI</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Petname Generator | Hosted at petname.moles.dev</p>
+        <p>Based on <a href="https://github.com/dustinkirkland/petname" target="_blank">dustinkirkland/petname</a></p>
+        <p><a href="https://github.com/jmoles/petname.moles.dev" target="_blank">View on GitHub</a></p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const root = document.documentElement;
+            const themeIcon = document.getElementById("themeIcon");
+            const themeText = document.getElementById("themeText");
+
+            if (body.classList.contains("light-theme")) {
+                body.classList.remove("light-theme");
+                root.style.colorScheme = "dark";
+                themeIcon.textContent = "☀\uFE0F";
+                themeText.textContent = "Light";
+                localStorage.setItem("theme", "dark");
+            } else {
+                body.classList.add("light-theme");
+                root.style.colorScheme = "light";
+                themeIcon.textContent = "\uD83C\uDF19";
+                themeText.textContent = "Dark";
+                localStorage.setItem("theme", "light");
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem("theme");
+            const body = document.body;
+            const root = document.documentElement;
+            const themeIcon = document.getElementById("themeIcon");
+            const themeText = document.getElementById("themeText");
+
+            if (savedTheme === "light") {
+                body.classList.add("light-theme");
+                root.style.colorScheme = "light";
+                themeIcon.textContent = "\uD83C\uDF19";
+                themeText.textContent = "Dark";
+            } else {
+                root.style.colorScheme = "dark";
+                themeIcon.textContent = "☀\uFE0F";
+                themeText.textContent = "Light";
+            }
+        }
+
+        loadTheme();
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "0f6e7a1e8ed1443f8018d74fa20b3290"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
